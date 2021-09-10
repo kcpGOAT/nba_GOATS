@@ -82,29 +82,32 @@ curry_harden_diff <- curry_harden %>%
               TS[name_common == "Stephen Curry"], 
             raptorO_diff = raptorO[name_common 
                                    == "James Harden"] - 
-              raptorO[name_common == "Stephen Curry"])
+              raptorO[name_common == "Stephen Curry"]) %>%
+  mutate(posTS = TS_diff > 0, posO = raptorO_diff > 0)
 
 ggplot(data = curry_harden_diff, 
        mapping = aes(x = year_id, y = TS_diff)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", mapping = aes(fill = posTS)) +
   theme_light() +
   scale_x_continuous(breaks = pretty(2010:2020, n = 11)) +
   labs(x = "Year", 
        y = "Harden TS% - Curry TS%", 
        title = "James Harden vs. Stephen Curry: True Shooting", 
        fill = "Player", 
-       caption = "Source: fivethirtyeight")
+       caption = "Source: fivethirtyeight") +
+  guides(fill = FALSE)
 
 ggplot(data = curry_harden_diff, 
        mapping = aes(x = year_id, y = raptorO_diff)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", mapping = aes(fill = posO)) +
   theme_light() +
   scale_x_continuous(breaks = pretty(2010:2020, n = 11)) +
   labs(x = "Year", 
        y = "Harden's Raptor O - Curry's Raptor O", 
        title = "James Harden vs. Stephen Curry", 
        fill = "Player", 
-       caption = "Source: fivethirtyeight")
+       caption = "Source: fivethirtyeight") +
+  guides(fill = FALSE)
 
 new_curry_harden_diff <- curry_harden_diff %>%
   gather(key = type_offense, 
