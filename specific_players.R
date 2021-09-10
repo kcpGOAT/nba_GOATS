@@ -1,3 +1,5 @@
+library(tidyverse)
+
 # Stephen Curry's Progress
 curry_progress <- nba_data_historical %>%
   filter(name_common == "Stephen Curry", G > 10) %>%
