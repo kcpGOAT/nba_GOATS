@@ -1,5 +1,8 @@
 library(tidyverse)
 
+
+
+
 # player progress charts
 lebron_james_TS <- nba_data_historical %>%
   rename(TS = "TS%") %>%
@@ -19,6 +22,7 @@ ggplot(data = lebron_james_TS, mapping = aes(x = year_id, y = avg_TS)) +
 
 
 
+
 kobe_bryant_TS <- nba_data_historical %>%
   rename(TS = "TS%") %>%
   filter(name_common == "Kobe Bryant") %>%
@@ -32,6 +36,8 @@ ggplot(data = kobe_bryant_TS, mapping = aes(x = year_id, y = avg_TS)) +
        y = "True Shooting Percentage", 
        title = "Kobe Bryant's True Shooting Percentage by Year",
        caption = "Source: fivethirtyeight")
+
+
 
 
 michael_jordan_TS <- nba_data_historical %>%
@@ -68,6 +74,8 @@ magic_TS <- nba_data_historical %>%
   filter(name_common == "Magic Johnson") %>%
   group_by(year_id) %>%
   summarize(avg_TS = mean(TS, na.rm = TRUE))
+
+
 
 
 # for all six (last three haven't had plots yet)
@@ -117,6 +125,9 @@ goat_avgs <- goats %>%
   arrange(desc(avg_TS))
 
 
+
+
+
 # GOATs' defensive raptor ratings together
 ggplot(data = goats, mapping = aes(x = year_id, y = avg_raptorD)) +
   geom_jitter(mapping = aes(color = name_common)) +
@@ -130,6 +141,9 @@ ggplot(data = goats, mapping = aes(x = year_id, y = avg_raptorD)) +
        title = "Comparison of NBA GOATs by Defensive Raptor Rating", 
        caption = "Source: fivethirtyeight", 
        color = "Name")
+
+
+
 
 
 # GOATs' overall raptor ratings together
