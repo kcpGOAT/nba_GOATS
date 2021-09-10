@@ -1,3 +1,5 @@
+library(tidyverse)
+
 # player progress charts
 lebron_james_TS <- nba_data_historical %>%
   rename(TS = "TS%") %>%
