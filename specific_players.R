@@ -1,4 +1,5 @@
 # Imports set of necessary packages, with these being ggplot2 and dplyr
+# Imports set of necessary packages, with these being ggplot2 and dplyr
 library(tidyverse)
 
 
@@ -150,3 +151,62 @@ ggplot(data = new_curry_harden_diff,
        title = "James Harden vs. Stephen Curry", 
        fill = "Type of Offensive Rating", 
        caption = "Source: fivethirtyeight")
+
+
+## This part compares the top players of 2010 draft class
+## and their performance during the regular season. 
+best_2010_RS <- nba_data_historical %>%
+  rename(TS = "TS%") %>%
+  rename(raptorO = "Raptor O") %>%
+  rename(raptorW = "Raptor WAR") %>%
+  filter(G > 10, 
+         name_common %in% c("John Wall", "DeMarcus Cousins", 
+                            "Gordon Hayward", "Paul George"), 
+         type == "RS") %>%
+  group_by(name_common, year_id) %>%
+  summarize(TS = mean(TS, na.rm = TRUE), 
+            raptorO = mean(raptorO, na.rm = TRUE), 
+            raptorW = mean(raptorW, na.rm = TRUE))
+
+ggplot(data = best_2010_RS, mapping = aes(y = TS)) +
+  geom_boxplot(mapping = aes(fill = name_common)) +
+  theme_light() +
+  labs(fill = "Player", 
+       y = "True Shooting Percentage", 
+       title = "Boxplot of top players among 2010 draft class and their TS%", 
+       caption = "Source: fivethirtyeight") +
+  theme(axis.text.x = element_blank())
+
+ggplot(data = best_2010_RS, mapping = aes(year_id, TS)) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "loess", color = "red") +
+  scale_x_continuous(breaks = pretty(2010:2020, n = 6)) +
+  labs(y = "True Shooting Percentage", 
+       title = "Career TS% among the top players of the 2010 draft class", 
+       caption = "Source: fivethirtyeight") +
+  facet_wrap(~name_common, nrow = 2) +
+  theme_fivethirtyeight() +
+  theme(axis.title.y = element_text(vjust = 2.5))
+
+
+ggplot(data = best_2010_RS, mapping = aes(year_id, TS)) +
+  geom_point(color = "blue") +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks = pretty(2010:2020, n = 6)) +
+  labs(y = "True Shooting Percentage", 
+       title = "Career TS% among the top players of the 2010 draft class", 
+       caption = "Source: fivethirtyeight") +
+  facet_wrap(~name_common, nrow = 2) +
+  theme_fivethirtyeight() +
+  theme(axis.title.y = element_text(vjust = 2.5))
+
+ggplot(data = best_2010_RS, mapping = aes(year_id, TS)) +
+  geom_point(color = "blue") +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks = pretty(2010:2020, n = 6)) +
+  labs(y = "True Shooting Percentage", 
+       title = "Career TS% among the top players of the 2010 draft class", 
+       caption = "Source: fivethirtyeight") +
+  facet_wrap(~name_common, nrow = 2) +
+  theme_light() +
+  theme(axis.title.y = element_text(vjust = 2.5))
