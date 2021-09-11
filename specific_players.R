@@ -1,6 +1,8 @@
+# Imports set of necessary packages, with these being ggplot2 and dplyr
 library(tidyverse)
 
-# Stephen Curry's Progress
+
+## This code transforms the original dataset into another one that only includes the yearly averages of the specified statistics for the player Stephen Curry.
 curry_progress <- nba_data_historical %>%
   filter(name_common == "Stephen Curry", G > 10) %>%
   rename(TS = "TS%") %>%
@@ -12,6 +14,9 @@ curry_progress <- nba_data_historical %>%
             raptorO = mean(raptorO, na.rm = TRUE),
             raptorW = mean(raptorW, na.rm = TRUE),
             AST = mean(AST, na.rm = TRUE)) 
+
+
+## This bar chart depicts Stephen Curry's TS% over his NBA career. 
 ggplot(data = curry_progress, 
        mapping = aes(x = year_id, y = TS - 60)) +
   geom_bar(stat = "identity") +
@@ -26,7 +31,7 @@ ggplot(data = curry_progress,
        caption = "Source: fivethirtyeight")
 
 
-# Stephen Curry vs James Harden
+## This code creates a data frame that contains the yearly averages for both Stephen Curry and James Harden. 
 curry_harden <- nba_data_historical %>%
   filter(name_common %in% c("Stephen Curry", "James Harden")) %>%
   rename(TS = "TS%") %>%
@@ -36,7 +41,8 @@ curry_harden <- nba_data_historical %>%
             raptorO = mean(raptorO, na.rm = TRUE)) %>%
   arrange(year_id)
 
-## Base R
+
+## This graph depicts the TS% of Stephen Curry over the years using base R. 
 plot(TS ~ year_id, 
      col = "blue",
      data = curry_harden[curry_harden$name_common == "Stephen Curry", ])
@@ -44,6 +50,9 @@ regression_curry <- lm(TS ~ year_id,
                        data = curry_harden[curry_harden$name_common 
                                            == "Stephen Curry", ])
 abline(regression_curry)
+
+
+## Also using base R, this graph depicts the TS% of James Harden over the years on top of the previous plot. 
 par(new = TRUE)
 plot(TS ~ year_id, 
      col = "red",
@@ -55,7 +64,8 @@ regression_harden <- lm(TS ~ year_id,
                                             == "James Harden", ])
 abline(regression_harden)
 
-## ggplot
+
+## Same thing as above but using ggplot2. 
 ggplot(data = curry_harden, mapping = aes(x = year_id, y = TS)) +
   geom_point(mapping = aes(color = name_common)) +
   geom_smooth(method = "lm", 
@@ -63,6 +73,8 @@ ggplot(data = curry_harden, mapping = aes(x = year_id, y = TS)) +
               se = FALSE) +
   theme_light()
 
+
+## This bar chart depicts the difference between Harden's TS% and Curry's TS% using two separate bars for each year, with each ear representing each player. 
 ggplot(data = curry_harden, 
        mapping = aes(x = year_id, y = TS - 40)) +
   geom_bar(stat = "identity", 
@@ -76,6 +88,9 @@ ggplot(data = curry_harden,
        fill = "Player", 
        caption = "Source: fivethirtyeight")
 
+
+## This code creates a data frame that contains the numerical difference between Harden's TS% and Curry's TS%, as well as a boolean that indicates whether or not
+## the difference is positive or negative. 
 curry_harden_diff <- curry_harden %>%
   group_by(year_id) %>%
   summarize(TS_diff = TS[name_common == "James Harden"] - 
@@ -85,6 +100,8 @@ curry_harden_diff <- curry_harden %>%
               raptorO[name_common == "Stephen Curry"]) %>%
   mutate(posTS = TS_diff > 0, posO = raptorO_diff > 0)
 
+
+## This creates a bar chart that shows the aforementioned difference, with the color of the bar being based on whether the difference is positive or negative. 
 ggplot(data = curry_harden_diff, 
        mapping = aes(x = year_id, y = TS_diff)) +
   geom_bar(stat = "identity", mapping = aes(fill = posTS)) +
@@ -97,6 +114,8 @@ ggplot(data = curry_harden_diff,
        caption = "Source: fivethirtyeight") +
   guides(fill = FALSE)
 
+
+## This depicts the same thing as above but for Offensive RAPTOR Rating instead. 
 ggplot(data = curry_harden_diff, 
        mapping = aes(x = year_id, y = raptorO_diff)) +
   geom_bar(stat = "identity", mapping = aes(fill = posO)) +
@@ -109,11 +128,16 @@ ggplot(data = curry_harden_diff,
        caption = "Source: fivethirtyeight") +
   guides(fill = FALSE)
 
+
+## This data frame gathers the different offensive values into being categories of offense type, which is the new column, thereby enabling geom_bar to select 
+## a fill based on offense type. 
 new_curry_harden_diff <- curry_harden_diff %>%
   gather(key = type_offense, 
          value = offense, 
          TS_diff:raptorO_diff)
 
+
+## This bar chart shows the difference between Harden and Curry based on both TS% and Offensive RAPTOR rating. 
 ggplot(data = new_curry_harden_diff, 
        mapping = aes(year_id, offense)) +
   geom_bar(stat = "identity", 
